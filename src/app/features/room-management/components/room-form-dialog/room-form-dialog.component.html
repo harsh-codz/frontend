@@ -7,71 +7,102 @@
     <p>Loading data...</p>
   </div>
 
-  <form #roomForm="ngForm" *ngIf="!isLoading">
+  <!-- Form with ngSubmit -->
+  <form #roomForm="ngForm" (ngSubmit)="onSave()" *ngIf="!isLoading">
 
+    <!-- === FORM FIELDS === -->
+
+    <!-- ** CORRECTED Room Number Field (Only ONE) ** -->
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Room Number</mat-label>
-      <input matInput [(ngModel)]="roomData.roomNumber" name="roomNumber" required placeholder="e.g., 101">
-       <mat-error *ngIf="roomForm.controls['roomNumber']?.invalid && roomForm.controls['roomNumber']?.touched">Room number is required.</mat-error>
+      <input
+        matInput
+        [(ngModel)]="roomData.roomNumber"
+        name="roomNumber"        required
+        placeholder="e.g., 101"
+        maxlength="6"           [readonly]="isEditMode"   />
+      <mat-error *ngIf="roomForm.controls['roomNumber']?.invalid && roomForm.controls['roomNumber']?.touched">Room number is required.</mat-error>
+      <!-- Optional: Add error for maxlength if you want specific message -->
+      <!-- <mat-error *ngIf="roomForm.controls['roomNumber']?.errors?.['maxlength']">Must be 6 characters max.</mat-error> -->
     </mat-form-field>
 
+
+    <!-- Room Type Field -->
     <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Room Type</mat-label>
-        <mat-select [(ngModel)]="roomData.roomTypeId" name="roomTypeId" required>
-            <mat-option *ngFor="let type of roomTypes" [value]="type.id">
-                {{ type.name }}
-            </mat-option>
-        </mat-select>
-         <mat-error *ngIf="roomForm.controls['roomTypeId']?.invalid && roomForm.controls['roomTypeId']?.touched">Room type is required.</mat-error>
+      <mat-label>Room Type</mat-label>
+      <mat-select [(ngModel)]="roomData.roomTypeId" name="roomTypeId" required>
+        <mat-option *ngFor="let type of roomTypes" [value]="type.id">
+          {{ type.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="roomForm.controls['roomTypeId']?.invalid && roomForm.controls['roomTypeId']?.touched">Room type is required.</mat-error>
     </mat-form-field>
 
-     <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Price Per Night</mat-label>
-        <input matInput type="number" [(ngModel)]="roomData.pricePerNight" name="pricePerNight" required min="0" placeholder="e.g., 150">
-         <span matTextPrefix>$ </span>
-        <mat-error *ngIf="roomForm.controls['pricePerNight']?.invalid && roomForm.controls['pricePerNight']?.touched">Valid price is required.</mat-error>
-      </mat-form-field>
 
-     <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Status</mat-label>
-        <mat-select [(ngModel)]="roomData.roomStatus" name="roomStatus" required>
-            <mat-option *ngFor="let status of availableStatuses" [value]="status">
-                {{ status }} <!-- Consider formatting status names if needed -->
-            </mat-option>
-        </mat-select>
-         <mat-error *ngIf="roomForm.controls['roomStatus']?.invalid && roomForm.controls['roomStatus']?.touched">Status is required.</mat-error>
-     </mat-form-field>
+    <!-- Price Per Night Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Price Per Night</mat-label>
+      <input matInput type="number" [(ngModel)]="roomData.pricePerNight" name="pricePerNight" required min="0" placeholder="e.g., 150">
+      <span matTextPrefix>$ </span>
+      <mat-error *ngIf="roomForm.controls['pricePerNight']?.invalid && roomForm.controls['pricePerNight']?.touched">Valid price is required.</mat-error>
+    </mat-form-field>
 
-     <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Max Occupancy</mat-label>
-        <input matInput type="number" [(ngModel)]="roomData.maxOccupancy" name="maxOccupancy" required min="1" step="1" placeholder="e.g., 2">
-         <mat-error *ngIf="roomForm.controls['maxOccupancy']?.invalid && roomForm.controls['maxOccupancy']?.touched">Valid occupancy is required.</mat-error>
-      </mat-form-field>
 
-     <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Amenities</mat-label>
-        <mat-select [(ngModel)]="roomData.amenityIds" name="amenityIds" multiple>
-             <mat-option *ngFor="let amenity of amenities" [value]="amenity.id">
-                 {{ amenity.name }}
-             </mat-option>
-        </mat-select>
-         <!-- No required validation typically needed for amenities -->
-     </mat-form-field>
+    <!-- Status Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="roomData.roomStatus" name="roomStatus" required>
+        <mat-option *ngFor="let status of availableStatuses" [value]="status">
+          {{ status }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="roomForm.controls['roomStatus']?.invalid && roomForm.controls['roomStatus']?.touched">Status is required.</mat-error>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Description (Optional)</mat-label>
-        <textarea matInput [(ngModel)]="roomData.description" name="description" rows="3" placeholder="Brief description of the room..."></textarea>
-      </mat-form-field>
 
-  </form>
+    <!-- Max Occupancy Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Max Occupancy</mat-label>
+      <input matInput type="number" [(ngModel)]="roomData.maxOccupancy" name="maxOccupancy" required min="1" step="1" placeholder="e.g., 2">
+      <mat-error *ngIf="roomForm.controls['maxOccupancy']?.invalid && roomForm.controls['maxOccupancy']?.touched">Valid occupancy is required.</mat-error>
+    </mat-form-field>
 
-</mat-dialog-content>
 
-<mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()" [disabled]="isSaving">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!roomForm.valid || isSaving">
+    <!-- Amenities Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Amenities</mat-label>
+      <mat-select [(ngModel)]="roomData.amenityIds" name="amenityIds" multiple>
+        <mat-option *ngFor="let amenity of amenities" [value]="amenity.id">
+          {{ amenity.name }}
+        </mat-option>
+      </mat-select>
+      <!-- No required validation typically needed for amenities -->
+    </mat-form-field>
+
+
+    <!-- Description Field -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Description (Optional)</mat-label>
+      <textarea matInput [(ngModel)]="roomData.description" name="description" rows="3" placeholder="Brief description of the room..."></textarea>
+    </mat-form-field>
+
+    <!-- === END OF FORM FIELDS === -->
+
+
+    <!-- === ACTIONS INSIDE THE FORM === -->
+    <mat-dialog-actions align="end" class="form-actions">
+      <!-- Use type="button" for Cancel -->
+      <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving">Cancel</button>
+
+      <!-- Use type="submit" for Save/Update -->
+      <button mat-raised-button color="primary" type="submit" [disabled]="!roomForm.valid || isSaving">
         <span *ngIf="!isSaving">{{ isEditMode ? 'Update Room' : 'Create Room' }}</span>
         <span *ngIf="isSaving">Saving...</span>
         <mat-progress-spinner *ngIf="isSaving" mode="indeterminate" diameter="20" style="display: inline-block; margin-left: 8px;"></mat-progress-spinner>
-    </button>
-</mat-dialog-actions>
+      </button>
+    </mat-dialog-actions>
+    <!-- === END OF ACTIONS === -->
+
+  </form> <!-- <<<<<==== Closing FORM tag ==== -->
+
+</mat-dialog-content>

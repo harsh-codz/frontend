@@ -7,7 +7,8 @@ import { RoomType } from '../../models/room-type.model';
 import { Amenity } from '../../models/amenity.model';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
-
+import { HttpErrorResponse } from '@angular/common/http';
+const OCCUPIED_STATUS = 'OCCUPIED';
 @Component({
   selector: 'app-room-form-dialog',
   standalone: false,
@@ -28,7 +29,7 @@ export class RoomFormDialogComponent implements OnInit, OnDestroy {
   isSaving = false;
   roomTypes: RoomType[] = [];
   amenities: Amenity[] = [];
-  availableStatuses: string[] = ['AVAILABLE', 'MAINTENANCE', 'CLEANING']; // NEED ACTUAL STATUSES FROM BACKEND
+  availableStatuses: string[] = ['AVAILABLE', 'MAINTENANCE', 'CLEANING', OCCUPIED_STATUS, 'OUT_OF_ORDER']; // NEED ACTUAL STATUSES FROM BACKEND
   originalRoomId: number | null = null;
   private destroy$ = new Subject<void>();
 
@@ -100,24 +101,42 @@ export class RoomFormDialogComponent implements OnInit, OnDestroy {
 
   onSave(): void {
     if (this.isSaving) return; // Prevent double-click
+    if (this.isEditMode && this.roomData.roomStatus === OCCUPIED_STATUS) {
+      this.snackBar.open(`Cannot update room details while it is ${OCCUPIED_STATUS}.`, 'Close', { duration: 4000 });
+      return; // Stop execution, do not call API
+    }
     this.isSaving = true;
 
     const apiCall = this.isEditMode && this.originalRoomId
-      ? this.roomService.updateRoom(this.originalRoomId, this.roomData)
-      : this.roomService.createRoom(this.roomData);
+    ? this.roomService.updateRoom(this.originalRoomId, this.roomData)
+    : this.roomService.createRoom(this.roomData);
 
-    apiCall.pipe(takeUntil(this.destroy$)).subscribe({
-       next: (savedRoom) => {
-           this.isSaving = false;
-           this.dialogRef.close('saved'); // Signal success
-       },
-       error: (err) => {
-           this.isSaving = false;
-           const message = err.error?.message || err.message || `Failed to ${this.isEditMode ? 'update' : 'create'} room.`;
-           // Check for 409 Conflict (e.g., duplicate room number)
-            const detailedMessage = err.status === 409 ? `${message} (Possible conflict?)` : message;
-           console.error("Save error:", err);
-           this.snackBar.open(`Error: ${detailedMessage}`, 'Close', { duration: 5000 });
+  apiCall.pipe(takeUntil(this.destroy$)).subscribe({
+    next: (savedRoom) => {
+      this.isSaving = false;
+      // Pass back event type and room number for specific message
+      this.dialogRef.close({ event: 'saved', roomNumber: savedRoom.roomNumber });
+    },
+    error: (err: HttpErrorResponse) => { // Add type HttpErrorResponse
+      this.isSaving = false;
+      let detailedMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} room.`; // Default message
+      const backendErrorMessage = err.error?.message || err.message; // Try to get message from backend response
+
+      // --- Specific handling for 409 Conflict ---
+      if (err.status === 409) {
+         if (this.isEditMode) {
+             detailedMessage = `Error: Cannot update room. ${backendErrorMessage || 'May conflict with existing bookings.'}`;
+         } else { // Create mode conflict is likely duplicate room number
+             detailedMessage = `Error: Cannot create room. ${backendErrorMessage || 'Room number might already exist.'}`;
+         }
+      } else if (backendErrorMessage) {
+          // Use backend message for other errors if available
+          detailedMessage = `Error: ${backendErrorMessage}`;
+      }
+      // --- End of specific handling ---
+
+      console.error("Save error:", err);
+      this.snackBar.open(detailedMessage, 'Close', { duration: 6000 }); // Show 
            // Keep dialog open on error
        }
     });

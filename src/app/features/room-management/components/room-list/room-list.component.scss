@@ -38,3 +38,14 @@
   td.mat-cell .mat-icon-button {
       margin-right: 5px;
   }
+  td.mat-column-amenities { // Use mat-column-<columnDef name>
+    max-width: 250px;       // Example: Limit max width
+    white-space: nowrap;    // Prevent wrapping initially
+    overflow: hidden;       // Hide overflow
+    text-overflow: ellipsis; // Show '...' if text overflows
+    // Consider adding a matTooltip to show the full list on hover
+}
+
+th.mat-column-amenities { // Style header if needed
+  text-align: center;
+}

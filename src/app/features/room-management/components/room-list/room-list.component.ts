@@ -10,6 +10,7 @@ import { RoomFormDialogComponent } from '../room-form-dialog/room-form-dialog.co
 import { Subject } from 'rxjs';
 import { takeUntil, catchError, switchMap, startWith, map } from 'rxjs/operators';
 import { merge } from 'rxjs';
+import { Amenity } from '../../models/amenity.model';
 
 
 @Component({
@@ -20,7 +21,7 @@ import { merge } from 'rxjs';
 })
 export class RoomListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  displayedColumns: string[] = ['roomNumber', 'roomType', 'pricePerNight', 'status', 'maxOccupancy', 'actions'];
+  displayedColumns: string[] =['roomNumber', 'roomType', 'pricePerNight', 'status', 'maxOccupancy', 'amenities', 'actions'];
   dataSource = new MatTableDataSource<Room>([]);
   totalElements = 0;
   isLoading = false;
@@ -96,21 +97,46 @@ export class RoomListComponent implements OnInit, AfterViewInit, OnDestroy {
   openEditRoomDialog(room: Room): void {
     this.openRoomDialog(room);
   }
-
+  getAmenityNames(amenities: Amenity[] | null | undefined): string {
+    if (!amenities || amenities.length === 0) {
+      return '-'; // Return hyphen if no amenities
+    }
+    // Use optional chaining and filter null/undefined names
+    return amenities
+      .map(a => a?.name)        // Safely get names
+      .filter(name => !!name)   // Remove any null/undefined names
+      .join(', ');             // Join with comma and space
+  }
+  getAmenityNamesForTooltip(amenities: Amenity[] | null | undefined): string {
+    if (!amenities || amenities.length === 0) {
+      return ''; // Return empty string for tooltip if no amenities
+    }
+    return amenities
+      .map(a => a?.name)
+      .filter(name => !!name)
+      .join('\n'); // Join with newline for tooltip
+  }
   openRoomDialog(roomData?: Room): void {
     const dialogRef = this.dialog.open(RoomFormDialogComponent, {
-      width: '600px', // Adjust width as needed
-      data: { room: roomData } // Pass room data for editing, null/undefined for adding
+      width: '600px',
+      data: { room: roomData },
+      disableClose: true // Prevent closing by clicking outside or ESC during save
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result === 'saved') {
-         this.snackBar.open(`Room ${roomData ? 'updated' : 'created'} successfully!`, 'Close', { duration: 3000 });
-        // Trigger data refresh - easiest way is to re-trigger the merge stream
-         this.paginator.page.emit(); // Simulate a page event to reload
+      // Check if the result object exists, has the 'saved' event, and a roomNumber
+      if (result && result.event === 'saved' && result.roomNumber) {
+         // Determine if it was an add or edit based on whether roomData was passed in
+         const action = roomData ? 'updated' : 'created';
+         // Use the specific format from requirements
+         this.snackBar.open(`Room ${result.roomNumber} details are ${action} successfully!`, 'Close', { duration: 3000 });
+         // Trigger data refresh
+         this.paginator.page.emit(); // Simulate a page event to reload data
       } else if (result && result.error) {
+          // Handle specific error case passed back from dialog if needed (e.g., data load failure)
           this.snackBar.open(`Error: ${result.error}`, 'Close', { duration: 5000 });
       }
+      // If result is null/undefined, the dialog was cancelled - do nothing
     });
   }
 

@@ -50,6 +50,22 @@
               <td mat-cell *matCellDef="let room"> {{room.maxOccupancy}} </td>
           </ng-container>
   
+
+          <ng-container matColumnDef="amenities">
+            <th mat-header-cell *matHeaderCellDef> Amenities </th>
+            <td mat-cell *matCellDef="let room">
+                <!-- ** Simplified cell content using the component method ** -->
+                <span [matTooltip]="getAmenityNamesForTooltip(room.amenities)"
+                      matTooltipPosition="above">
+                  {{ getAmenityNames(room.amenities) }}
+                </span>
+            </td>
+        </ng-container>
+
+
+
+
+          
          <!-- Actions Column -->
          <ng-container matColumnDef="actions">
            <th mat-header-cell *matHeaderCellDef> Actions </th>
