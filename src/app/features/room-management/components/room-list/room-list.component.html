@@ -1,0 +1,88 @@
+<div class="room-list-container">
+    <h1>Room Management</h1>
+  
+    <div class="controls-bar">
+        <!-- TODO: Add Filter Input -->
+        <!-- <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Filter Rooms</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search by number, type..." #input>
+        </mat-form-field> -->
+  
+        <button mat-raised-button color="primary" (click)="openAddRoomDialog()">
+            <mat-icon>add</mat-icon> Add New Room
+        </button>
+    </div>
+  
+    <div class="spinner-container" *ngIf="isLoading">
+       <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    </div>
+  
+    <div class="mat-elevation-z8 table-container" [hidden]="isLoading">
+       <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sort.sortChange.emit()" matSortActive="roomNumber" matSortDirection="asc" matSortDisableClear>
+  
+         <!-- Room Number Column -->
+         <ng-container matColumnDef="roomNumber">
+           <th mat-header-cell *matHeaderCellDef mat-sort-header> Room No. </th>
+           <td mat-cell *matCellDef="let room"> {{room.roomNumber}} </td>
+         </ng-container>
+  
+         <!-- Room Type Column -->
+         <ng-container matColumnDef="roomType">
+           <th mat-header-cell *matHeaderCellDef mat-sort-header="roomType.name"> Type </th>
+           <td mat-cell *matCellDef="let room"> {{room.roomType?.name || 'N/A'}} </td> <!-- Handle potential null -->
+         </ng-container>
+  
+         <!-- Price Column -->
+         <ng-container matColumnDef="pricePerNight">
+           <th mat-header-cell *matHeaderCellDef mat-sort-header> Price/Night </th>
+           <td mat-cell *matCellDef="let room"> {{room.pricePerNight | currency}} </td> <!-- Use currency pipe -->
+         </ng-container>
+  
+         <!-- Status Column -->
+         <ng-container matColumnDef="status">
+             <th mat-header-cell *matHeaderCellDef mat-sort-header="roomStatus"> Status </th>
+             <td mat-cell *matCellDef="let room"> {{room.roomStatus}} </td> <!-- TODO: Add styling/chip based on status -->
+         </ng-container>
+  
+          <!-- Occupancy Column -->
+         <ng-container matColumnDef="maxOccupancy">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Max Occupancy </th>
+              <td mat-cell *matCellDef="let room"> {{room.maxOccupancy}} </td>
+          </ng-container>
+  
+         <!-- Actions Column -->
+         <ng-container matColumnDef="actions">
+           <th mat-header-cell *matHeaderCellDef> Actions </th>
+           <td mat-cell *matCellDef="let room">
+             <button mat-icon-button color="primary" matTooltip="Edit Room" (click)="openEditRoomDialog(room)">
+               <mat-icon>edit</mat-icon>
+             </button>
+             <button mat-icon-button color="warn" matTooltip="Delete Room" (click)="deleteRoom(room)">
+               <mat-icon>delete</mat-icon>
+             </button>
+             <!-- Add View Details button if needed -->
+           </td>
+         </ng-container>
+  
+         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+          <!-- Row shown when there is no matching data. -->
+         <tr class="mat-row" *matNoDataRow>
+             <td class="mat-cell" [attr.colspan]="displayedColumns.length" style="text-align: center; padding: 20px;">
+                 No rooms found matching the criteria.
+             </td>
+         </tr>
+  
+       </table>
+  
+       <mat-paginator
+         [length]="totalElements"
+         [pageSize]="10"
+         [pageSizeOptions]="[5, 10, 20, 50]"
+         showFirstLastButtons
+         aria-label="Select page of rooms">
+       </mat-paginator>
+     </div>
+  
+  </div>

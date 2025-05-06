@@ -1,0 +1,25 @@
+// Often, minimal custom styling is needed for mat-nav-list
+// The active link style is handled by routerLinkActive
+
+.mat-mdc-list-item.active-link {
+    // Style for the active link (background, color)
+    background-color: rgba(0, 0, 0, 0.04); // Example subtle background
+    color: var(--mat-primary-color); // Use theme primary color
+  
+    .mat-icon {
+       color: var(--mat-primary-color); // Ensure icon color matches
+    }
+  }
+  
+  .mat-mdc-subheader {
+      font-weight: 500;
+      color: rgba(0,0,0,.54);
+      margin-top: 10px;
+  }
+  
+  .mat-mdc-divider {
+      margin-top: 10px;
+      margin-bottom: 10px;
+  }
+  
+ 

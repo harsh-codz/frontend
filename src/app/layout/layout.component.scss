@@ -1,0 +1,22 @@
+.app-sidenav-container {
+    height: 100vh; // Ensure container takes full height
+    background-color: #f5f5f5; // Background for the content area container
+  }
+  
+  .app-sidenav {
+    width: 250px; // Set desired sidebar width
+    background-color: #ffffff; // Example background
+    border-right: 1px solid rgba(0, 0, 0, 0.12); // Material-style border
+    padding-top: 15px; // Optional padding inside sidenav
+  }
+  
+  .app-sidenav-content {
+    display: flex;
+    flex-direction: column; // Stack header, main, footer vertically
+  }
+  
+  .app-main-content {
+     padding: 20px; // Padding around the routed content
+     flex-grow: 1; // Allow content to fill available space
+     overflow-y: auto; // Allow content area to scroll if needed
+  }

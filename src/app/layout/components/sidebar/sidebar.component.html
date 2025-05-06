@@ -1,0 +1,41 @@
+<mat-nav-list>
+    <h3 matSubheader>Menu</h3>
+    <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+      <mat-icon matListItemIcon>dashboard</mat-icon>
+      <span matListItemTitle>Dashboard</span>
+    </a>
+  
+    <!-- Admin Links -->
+    <ng-container *ngIf="hasRole('ROLE_ADMIN')">
+        <mat-divider></mat-divider>
+        <h3 matSubheader>Admin</h3>
+        <a mat-list-item routerLink="/admin/rooms" routerLinkActive="active-link" *ngIf="hasRole('ROLE_ADMIN')">
+            <mat-icon matListItemIcon>hotel</mat-icon>
+            <span matListItemTitle>Room Management</span>
+        </a>
+        <a mat-list-item routerLink="/admin/bookings" routerLinkActive="active-link">
+             <mat-icon matListItemIcon>book_online</mat-icon>
+             <span matListItemTitle>Bookings</span>
+         </a>
+         <a mat-list-item routerLink="/admin/users" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>people</mat-icon>
+            <span matListItemTitle>Users</span>
+         </a>
+         <a mat-list-item routerLink="/admin/billing" routerLinkActive="active-link">
+              <mat-icon matListItemIcon>receipt_long</mat-icon>
+              <span matListItemTitle>Billing</span>
+          </a>
+    </ng-container>
+  
+     <!-- Common/Staff Links -->
+     <mat-divider></mat-divider>
+     <a mat-list-item routerLink="/complaints" routerLinkActive="active-link" *ngIf="hasRole(['ROLE_ADMIN', 'ROLE_STAFF'])">
+         <mat-icon matListItemIcon>report_problem</mat-icon>
+         <span matListItemTitle>Complaints</span>
+     </a>
+     <a mat-list-item routerLink="/profile" routerLinkActive="active-link">
+           <mat-icon matListItemIcon>account_circle</mat-icon>
+           <span matListItemTitle>My Profile</span>
+      </a>
+  
+  </mat-nav-list>

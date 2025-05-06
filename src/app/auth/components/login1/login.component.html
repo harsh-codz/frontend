@@ -1,0 +1,70 @@
+<div class="login-page">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Hotel Admin Login</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <!-- Username Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            required
+            #usernameInput="ngModel"
+            placeholder="Enter your username"
+            autocomplete="username"
+          />
+          <mat-error *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched)">
+            Username is required.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+            #passwordInput="ngModel"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+          />
+           <mat-error *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)">
+            Password is required.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Error Message Display -->
+        <div *ngIf="errorMessage && !isLoading" class="error-message">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Loading Spinner -->
+         <div *ngIf="isLoading" class="loading-spinner">
+            <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
+         </div>
+
+
+        <!-- Submit Button -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="full-width login-button"
+          [disabled]="loginForm.invalid || isLoading">
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

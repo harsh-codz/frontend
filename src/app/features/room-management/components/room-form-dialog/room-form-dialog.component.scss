@@ -1,0 +1,28 @@
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    gap: 15px;
+    color: rgba(0,0,0,.6);
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; // Reduce gap slightly for form fields
+  }
+  
+  .form-field {
+      width: 100%;
+      margin-bottom: 10px; // Add margin below fields
+  }
+  
+  mat-dialog-content {
+      max-height: 70vh; // Prevent dialog from becoming too tall
+  }
+  
+  mat-dialog-actions {
+      padding: 16px 24px;
+  }

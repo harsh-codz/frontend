@@ -39,6 +39,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -74,11 +75,14 @@
               "buildTarget": "hotel-admin-frontend:build:production"
             },
             "development": {
-              "buildTarget": "hotel-admin-frontend:build:development"
+              "buildTarget": "hotel-admin-frontend:build:development",
+                "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
         },
+      
+         
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
         },
@@ -98,6 +102,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
             "scripts": []

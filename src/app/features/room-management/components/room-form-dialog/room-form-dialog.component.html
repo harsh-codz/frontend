@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Room' : 'Add New Room' }}</h2>
+
+<mat-dialog-content class="mat-typography">
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    <p>Loading data...</p>
+  </div>
+
+  <form #roomForm="ngForm" *ngIf="!isLoading">
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Room Number</mat-label>
+      <input matInput [(ngModel)]="roomData.roomNumber" name="roomNumber" required placeholder="e.g., 101">
+       <mat-error *ngIf="roomForm.controls['roomNumber']?.invalid && roomForm.controls['roomNumber']?.touched">Room number is required.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Room Type</mat-label>
+        <mat-select [(ngModel)]="roomData.roomTypeId" name="roomTypeId" required>
+            <mat-option *ngFor="let type of roomTypes" [value]="type.id">
+                {{ type.name }}
+            </mat-option>
+        </mat-select>
+         <mat-error *ngIf="roomForm.controls['roomTypeId']?.invalid && roomForm.controls['roomTypeId']?.touched">Room type is required.</mat-error>
+    </mat-form-field>
+
+     <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Price Per Night</mat-label>
+        <input matInput type="number" [(ngModel)]="roomData.pricePerNight" name="pricePerNight" required min="0" placeholder="e.g., 150">
+         <span matTextPrefix>$ </span>
+        <mat-error *ngIf="roomForm.controls['pricePerNight']?.invalid && roomForm.controls['pricePerNight']?.touched">Valid price is required.</mat-error>
+      </mat-form-field>
+
+     <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="roomData.roomStatus" name="roomStatus" required>
+            <mat-option *ngFor="let status of availableStatuses" [value]="status">
+                {{ status }} <!-- Consider formatting status names if needed -->
+            </mat-option>
+        </mat-select>
+         <mat-error *ngIf="roomForm.controls['roomStatus']?.invalid && roomForm.controls['roomStatus']?.touched">Status is required.</mat-error>
+     </mat-form-field>
+
+     <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Max Occupancy</mat-label>
+        <input matInput type="number" [(ngModel)]="roomData.maxOccupancy" name="maxOccupancy" required min="1" step="1" placeholder="e.g., 2">
+         <mat-error *ngIf="roomForm.controls['maxOccupancy']?.invalid && roomForm.controls['maxOccupancy']?.touched">Valid occupancy is required.</mat-error>
+      </mat-form-field>
+
+     <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Amenities</mat-label>
+        <mat-select [(ngModel)]="roomData.amenityIds" name="amenityIds" multiple>
+             <mat-option *ngFor="let amenity of amenities" [value]="amenity.id">
+                 {{ amenity.name }}
+             </mat-option>
+        </mat-select>
+         <!-- No required validation typically needed for amenities -->
+     </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Description (Optional)</mat-label>
+        <textarea matInput [(ngModel)]="roomData.description" name="description" rows="3" placeholder="Brief description of the room..."></textarea>
+      </mat-form-field>
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isSaving">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!roomForm.valid || isSaving">
+        <span *ngIf="!isSaving">{{ isEditMode ? 'Update Room' : 'Create Room' }}</span>
+        <span *ngIf="isSaving">Saving...</span>
+        <mat-progress-spinner *ngIf="isSaving" mode="indeterminate" diameter="20" style="display: inline-block; margin-left: 8px;"></mat-progress-spinner>
+    </button>
+</mat-dialog-actions>

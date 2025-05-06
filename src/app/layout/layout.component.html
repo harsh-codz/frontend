@@ -1,0 +1,24 @@
+<mat-sidenav-container class="app-sidenav-container">
+
+    <!-- Sidebar (Sidenav) -->
+    <mat-sidenav #sidenav mode="side" opened class="app-sidenav">
+      <!-- Inject the sidebar component content here -->
+      <app-sidebar></app-sidebar>
+    </mat-sidenav>
+  
+    <!-- Main Content Area -->
+    <mat-sidenav-content class="app-sidenav-content">
+      <!-- Header Toolbar -->
+      <app-header></app-header>
+  
+      <!-- Content Routing Outlet -->
+      <main class="app-main-content">
+        <router-outlet></router-outlet>
+      </main>
+  
+      <!-- Optional Footer -->
+      <!-- <app-footer></app-footer> -->
+  
+    </mat-sidenav-content>
+  
+  </mat-sidenav-container>

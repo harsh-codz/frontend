@@ -1,0 +1,16 @@
+.app-mat-toolbar {
+    // Toolbar already handles flex layout
+}
+
+.spacer {
+  flex: 1 1 auto; // Takes up available space
+}
+
+.welcome-message {
+  margin-right: 15px;
+  font-size: 0.9em;
+}
+
+button[mat-icon-button] {
+    // Icon button styles (color adjusted by theme)
+}

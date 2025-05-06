@@ -1,0 +1,12 @@
+<mat-toolbar color="primary" class="app-mat-toolbar">
+    <span>Hotel Admin Panel</span>
+  
+    <span class="spacer"></span> <!-- This pushes items to the right -->
+  
+    <ng-container *ngIf="authService.currentUser$ | async as user">
+      <span class="welcome-message">Welcome, {{ user.username }}!</span>
+      <button mat-icon-button (click)="logout()" aria-label="Logout" matTooltip="Logout">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </ng-container>
+  </mat-toolbar>

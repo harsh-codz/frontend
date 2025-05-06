@@ -1,0 +1,40 @@
+.room-list-container {
+    padding: 20px;
+  }
+  
+  .controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; // Allow wrapping on smaller screens
+    gap: 15px;
+  }
+  
+  .filter-field {
+      // width: 300px; // Adjust width
+  }
+  
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+  }
+  
+  .table-container {
+    overflow: auto; // Allow horizontal scrolling on small screens if needed
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  th.mat-sort-header-sorted {
+    color: black;
+  }
+  
+  // Make action buttons closer together
+  td.mat-cell .mat-icon-button {
+      margin-right: 5px;
+  }
